@@ -1,0 +1,20 @@
+local UpdateDescr_old = ui_pda_encyclopedia_tab.UpdateDescr
+
+ui_pda_encyclopedia_tab.UpdateDescr = function(section, str)
+	str = UpdateDescr_old(section, str)
+	if section == "encyclopedia__notes__ironman" then
+		local ironman = gamemode_ironman.get_ironman_details()
+		if ironman and ironman.life_feature then
+			local start_time = level.get_start_time()
+			local seconds = tonumber(game.get_game_time():diffSec(start_time))
+			local minutes = math.floor(seconds/60)
+			local hours = math.floor(minutes/60)
+			local true_hrs = hours
+			local total_lives = math.floor(true_hrs/ironman.life_cycle)
+			local life_timer = ironman.life_cycle - (true_hrs - ( ironman.life_cycle * total_lives ))
+
+			str = str .. utils_xml.get_color("ui_gray_1") .. " \\n• " .. game.translate_string("pda_encyclopedia_ironman_current_cycle") .. ": " ..  utils_xml.get_color("pda_white") .. tostring(life_timer)
+		end
+	end
+	return str
+end
